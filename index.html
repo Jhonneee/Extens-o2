@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="liviapixel.png">
+    <title>login</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Centralizar e aumentar o logo */
+        header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            width: 150px; /* Aumentar o tamanho do logo */
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        /* Botões estilizados */
+        button {
+            background-color: #7312eb; /* Cor personalizada */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #5d0fcc; /* Tonalidade mais escura para hover */
+        }
+
+        /* Botão mais fino para o admin */
+        .admin-button {
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-blur"></div>
+    <div class="container">
+        <header>
+            <h1>Bem-vindo</h1>
+            <img src="liviapixel.png" alt="Logo" class="logo">
+        </header>
+        <div class="presentation">
+            <p></p>
+            <button onclick="location.href='/login.html'">Logar</button>
+            <button class="admin-button" onclick="location.href='/gerartoken.html'">Acessar Token (Admin)</button> <!-- Botão de admin ajustado -->
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerar Token</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background-color: black;
+        }
+
+        .container {
+            width: 100%; /* Ajusta a largura da container para 100% */
+            max-width: 1200px; /* Define um max-width para a container */
+            padding: 0 20px; /* Adiciona padding nas laterais */
+            margin: 0 auto; /* Centraliza a container */
+        }
+
+        @media screen and (min-width: 992px) and (max-width: 1439px) {
+            .container {
+                max-width: 1279px;
+                margin: 0 40px; /* Ajusta margens laterais para telas intermediárias */
+            }
+        }
+
+        @media screen and (max-width: 991px) {
+            .container {
+                max-width: 959px;
+                margin: 0 16px; /* Ajusta margens laterais para telas menores */
+            }
+        }
+
+        .container-title {
+            text-align: center;
+            padding: 0 !important;
+            margin-bottom: 40px;
+            font-size: 40px;
+            color: #fff;
+            font-weight: 600;
+            line-height: 60px;
+        }
+
+        /* Estilo do botão de voltar */
+        #backButton {
+            position: fixed;
+            top: 20px; /* Distância do topo */
+            left: 20px; /* Distância da esquerda */
+            width: 50px;
+            height: 50px;
+            border: 2px solid transparent; /* Borda transparente por padrão */
+            border-radius: 50%; /* Borda arredondada */
+            background-color: transparent; /* Remove o fundo */
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: none; /* Remove sombra */
+            transition: border 0.3s ease; /* Adiciona transição para a borda */
+        }
+
+        #backButton:hover {
+            border: 2px solid #7a2b8a; /* Borda roxa ao passar o mouse */
+        }
+
+        .back-arrow {
+            font-size: 24px; /* Tamanho da seta */
+            transform: rotate(0deg); /* Mantém a seta na posição normal */
+            margin-left: -5px; /* Ajuste de margem para alinhar melhor */
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            width: 100%; /* Garante que a form-group use toda a largura disponível */
+        }
+
+        label {
+            font-weight: 600;
+            color: white;
+            font-size: 18px;
+            display: block; /* Garante que o label ocupe toda a linha */
+            margin-bottom: 5px; /* Espaço entre o label e o input */
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            max-width: 100%; /* Garante que o input não ultrapasse o card */
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #3a3a3a;
+            color: white;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 45px; /* Borda arredondada igual ao card */
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 10px; /* Adiciona margem ao botão */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            display: inline-block; /* Garante que o botão seja tratado como inline */
+            border: 2px solid transparent;
+        }
+
+        button:hover {
+            border: 2px solid transparent;
+        }
+
+        #tokenResult {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #copyTokenButton {
+            margin-top: 10px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 45px; /* Borda arredondada igual ao card */
+            background: linear-gradient(71deg, #008cba, #5fa6d6, #008cba); /* Gradiente azul */
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            display: inline-block; /* Garante que o botão seja tratado como inline */
+        }
+
+        #copyTokenButton:hover {
+            background: linear-gradient(71deg, #007bb5, #5fa6d6, #007bb5); /* Efeito de hover mais escuro */
+        }
+    </style>
+</head>
+<body>
+    <!-- Botão Voltar -->
+    <button id="backButton" onclick="window.location.href='index.html'"><span class="back-arrow">←</span></button>
+
+    <div class="container">
+        <h2 class="container-title">Gerar Token</h2>
+        <form id="tokenForm">
+            <div class="form-group">
+                <label for="username">Nome de usuário (Admin):</label>
+                <input type="text" id="username" name="username" required oninvalid="this.setCustomValidity('Por favor, preencha este campo.')" oninput="this.setCustomValidity('')">
+            </div>
+            <div class="form-group">
+                <label for="password">Senha:</label>
+                <input type="password" id="password" name="password" required oninvalid="this.setCustomValidity('Por favor, preencha este campo.')" oninput="this.setCustomValidity('')">
+            </div>
+            <button type="submit">Gerar Token</button>
+        </form>
+        
+        <!-- Seção para exibir o token gerado -->
+        <div id="tokenResult" style="display: none;">
+            <h3 class="container-title">Token Gerado</h3>
+            <p id="generatedToken"></p>
+            <button id="copyTokenButton">Copiar Token</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('tokenForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            fetch('http://localhost:3001/createToken', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.token) {
+                    // Atualiza a exibição do token gerado
+                    document.getElementById('generatedToken').innerText = `Token: ${data.token} (Válido até: ${formatDate(data.expiryDate)})`;
+                    document.getElementById('tokenResult').style.display = 'block';
+                    document.getElementById('tokenForm').style.display = 'none'; // Esconde o formulário
+                } else {
+                    alert(data || "Erro ao gerar o token.");
+                }
+            })
+            .catch(error => {
+                alert('Erro: ' + error.message);
+            });
+        });
+
+        // Função para formatar a data no formato brasileiro
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-BR'); // Formatação para DD/MM/YYYY
+        }
+
+        // Função para copiar o token gerado
+        document.getElementById('copyTokenButton').addEventListener('click', function() {
+            const tokenText = document.getElementById('generatedToken').innerText.replace('Token: ', '').split(' (')[0]; // Obtém apenas o token
+            navigator.clipboard.writeText(tokenText)
+                .then(() => {
+                    alert('Token copiado para a área de transferência!');
+                })
+                .catch(err => {
+                    alert('Erro ao copiar o token: ' + err);
+                });
+        });
+    </script>
+</body>
+</html>

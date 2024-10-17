@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráfico</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Estilos gerais do corpo */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: black; /* Fundo preto */
+            color: #ffffff; /* Texto em branco para contraste */
+            overflow: auto; /* Permite rolagem na página principal */
+            max-height: 100vh; /* Define a altura máxima da janela */
+        }
+
+        /* Efeito de desfoque no fundo */
+        .background-blur {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Fundo mais escuro */
+            backdrop-filter: blur(10px);
+            z-index: -1; /* Fica atrás do conteúdo */
+        }
+
+        /* Container principal */
+        .container {
+            max-width: 1200px !important;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #1a171c; /* Escuro com um leve tom */
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); /* Sombra mais intensa */
+            position: relative; /* Para o efeito de contorno */
+        }
+
+        .container::before {
+            content: "";
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 14px; /* Levemente maior que o contêiner */
+            background: linear-gradient(71deg, #0d1212, #7312eb, #0d1212); /* Gradiente como contorno */
+            z-index: -1; /* Coloca atrás do contêiner */
+        }
+
+        canvas {
+            max-width: 600px;
+            margin: 20px;
+        }
+
+        #backButton {
+            position: fixed;
+            top: 20px; /* Distância do topo */
+            left: 20px; /* Distância da esquerda */
+            width: 50px;
+            height: 50px;
+            border: 2px solid transparent; /* Borda transparente por padrão */
+            border-radius: 50%; /* Borda arredondada */
+            background-color: transparent; /* Remove o fundo */
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: none; /* Remove sombra */
+            transition: border 0.3s ease; /* Adiciona transição para a borda */
+        }
+
+        #backButton:hover {
+            border: 2px solid #7a2b8a; /* Borda roxa ao passar o mouse */
+        }
+
+        .backbutton button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 45px; /* Borda arredondada igual ao card */
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 10px; /* Adiciona margem ao botão */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            display: inline-block; /* Garante que o botão seja tratado como inline */
+            border: 2px solid transparent;
+        }
+
+        .backbutton button:hover {
+            border: 2px solid transparent;
+        }
+        /* Estilos do título */
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <button id="backButton" onclick="window.location.href='escolhafunc.html'"><span class="back-arrow">←</span></button>
+    <div class="background-blur"></div>
+    <div class="container">
+        <h1>Renda</h1>
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <script>
+        async function fetchTotals() {
+            const response = await fetch('http://localhost:3000/total');
+            if (!response.ok) {
+                throw new Error('Erro ao obter dados');
+            }
+            return await response.json();
+        }
+
+        async function createChart() {
+            try {
+                const data = await fetchTotals();
+
+                const ctx = document.getElementById('myChart').getContext('2d');
+                const myChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Salários', 'Itens'],
+                        datasets: [{
+                            label: 'Total',
+                            data: [data.totalSalaries, data.totalItems],
+                            backgroundColor: [
+                                'rgba(54, 162, 235, 0.6)', // Cor para Salários
+                                'rgba(255, 99, 132, 0.6)'   // Cor para Itens
+                            ],
+                            borderColor: [
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 99, 132, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Total de Salários e Itens'
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error(error);
+                alert('Função não implementada.');
+            }
+        }
+
+        createChart();
+    </script>
+</body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Estoque</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Inclua seu CSS aqui -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery para facilitar manipulação DOM -->
+    <style>
+        /* Estilo global */
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        @media screen and (min-width: 992px) and (max-width: 1439px) {
+            .container {
+                max-width: 1279px;
+                padding: 0;
+                margin: 0 80px;
+            }
+        }
+
+        @media screen and (max-width: 991px) {
+            .container {
+                max-width: 959px;
+                margin: 0 16px;
+                padding: 0;
+            }
+        }
+
+        #backButton {
+            position: fixed;
+            top: 20px; /* Distância do topo */
+            left: 20px; /* Distância da esquerda */
+            width: 50px;
+            height: 50px;
+            border: 2px solid transparent; /* Borda transparente por padrão */
+            border-radius: 50%; /* Borda arredondada */
+            background-color: transparent; /* Remove o fundo */
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: none; /* Remove sombra */
+            transition: border 0.3s ease; /* Adiciona transição para a borda */
+        }
+
+        #backButton:hover {
+            border: 2px solid #7a2b8a; /* Borda roxa ao passar o mouse */
+        }
+
+        .backbutton button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 45px; /* Borda arredondada igual ao card */
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 10px; /* Adiciona margem ao botão */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            display: inline-block; /* Garante que o botão seja tratado como inline */
+            border: 2px solid transparent;
+        }
+
+        .backbutton button:hover {
+            border: 2px solid transparent;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 40px;
+            color: #fff;
+            font-weight: 600;
+            line-height: 60px;
+        }
+
+        form {
+            display: grid;
+            gap: 20px;
+            background: linear-gradient(71deg, #080509, #1a171c, #080509);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid #444;
+        }
+
+        label {
+            font-size: 18px;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background-color: #2c2c2c;
+            color: white;
+            font-size: 16px;
+        }
+
+        input[type="submit"] {
+            background-color: #5f6fad;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #4e5e94;
+        }
+
+        /* Tabela de produtos */
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+            color: white;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #444;
+            text-align: left;
+        }
+
+        th {
+            background-color: #333;
+            font-weight: bold;
+        }
+
+        td {
+            background-color: #1a1a1a;
+        }
+
+        button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            background-color: #5f6fad;
+            color: white;
+        }
+
+        button:hover {
+            background-color: #4e5e94;
+        }
+    </style>
+</head>
+<body>
+    <button id="backButton" onclick="window.location.href='escolhafunc.html'"><span class="back-arrow">←</span></button>
+    <header>
+        <h1>Gerenciamento de Estoque</h1>
+    </header>
+
+    <div class="container">
+        <main>
+            <section>
+                <h2>Adicionar Produto</h2>
+                <form id="addProductForm">
+                    <label for="name">Nome:</label>
+                    <input type="text" id="name" required>
+
+                    <label for="value">Valor:</label>
+                    <input type="number" id="value" required>
+
+                    <label for="expiration_date">Data de Expiração:</label>
+                    <input type="date" id="expiration_date" required>
+
+                    <label for="quantity">Quantidade:</label>
+                    <input type="number" id="quantity" required>
+
+                    <input type="submit" value="Adicionar Produto">
+                </form>
+            </section>
+
+            <section>
+                <h2>Lista de Produtos</h2>
+                <table id="productsTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Valor</th>
+                            <th>Data de Expiração</th>
+                            <th>Quantidade</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Os produtos serão inseridos aqui dinamicamente -->
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Função para carregar os produtos
+        async function loadProducts() {
+            try {
+                const response = await fetch('http://localhost:3000/items');
+                const products = await response.json();
+                const tableBody = document.querySelector('#productsTable tbody');
+                tableBody.innerHTML = ''; // Limpa a tabela
+
+                products.forEach(product => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${product.id}</td>
+                        <td>${product.name}</td>
+                        <td>${product.value}</td>
+                        <td>${product.expiration_date}</td>
+                        <td>${product.quantity}</td>
+                        <td>
+                            <button onclick="deleteProduct(${product.id})">Excluir</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar produtos:', error);
+            }
+        }
+
+        // Função para adicionar um produto
+        document.getElementById('addProductForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const value = document.getElementById('value').value;
+            const expiration_date = document.getElementById('expiration_date').value;
+            const quantity = document.getElementById('quantity').value;
+
+            try {
+                const response = await fetch('http://localhost:3000/addItem', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, value, expiration_date, quantity })
+                });
+
+                if (response.ok) {
+                    alert('Produto adicionado com sucesso!');
+                    loadProducts(); // Recarrega a lista de produtos
+                    document.getElementById('addProductForm').reset(); // Reseta o formulário
+                } else {
+                    alert('Erro ao adicionar produto');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+            }
+        });
+
+        // Função para excluir um produto
+        async function deleteProduct(id) {
+            if (confirm('Tem certeza que deseja excluir este produto?')) {
+                try {
+                    const response = await fetch(`http://localhost:3000/items/${id}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (response.ok) {
+                        alert('Produto excluído com sucesso!');
+                        loadProducts(); // Recarrega a lista de produtos
+                    } else {
+                        alert('Erro ao excluir produto');
+                    }
+                } catch (error) {
+                    console.error('Erro:', error);
+                }
+            }
+        }
+
+        // Carrega os produtos ao iniciar
+        loadProducts();
+    </script>
+</body>
+</html>

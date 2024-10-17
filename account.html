@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informações da Conta</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+         #backButton {
+            position: fixed;
+            top: 20px; /* Distância do topo */
+            left: 20px; /* Distância da esquerda */
+            width: 50px;
+            height: 50px;
+            border: 2px solid transparent; /* Borda transparente por padrão */
+            border-radius: 50%; /* Borda arredondada */
+            background-color: transparent; /* Remove o fundo */
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: none; /* Remove sombra */
+            transition: border 0.3s ease; /* Adiciona transição para a borda */
+        }
+
+        #backButton:hover {
+            border: 2px solid #7a2b8a; /* Borda roxa ao passar o mouse */
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 45px; /* Borda arredondada igual ao card */
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 10px; /* Adiciona margem ao botão */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            display: inline-block; /* Garante que o botão seja tratado como inline */
+            border: 2px solid transparent;
+        }
+
+        button:hover {
+            border: 2px solid transparent;
+        }
+
+    </style>
+</head>
+<body>
+    
+    <button id="backButton" onclick="window.location.href='escolhafunc.html'"><span class="back-arrow">←</span></button>
+
+    <div class="background-blur"></div>
+    <div class="container">
+        <h2>Informações da Conta</h2>
+        <div class="form-card">
+            <div id="accountInfo"></div>
+        </div>
+    </div>
+
+    <script>
+        // Recupera o nome de usuário do localStorage
+        const username = localStorage.getItem('username');
+
+        if (!username) {
+            alert('Você precisa estar logado para acessar esta página.');
+            window.location.href = 'login.html'; // Redireciona para a página de login se não estiver logado
+        } else {
+            // Carrega as informações da conta
+            fetch(`http://localhost:3001/account/${username}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao carregar informações da conta');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Formata a data de expiração do token para o formato brasileiro (DD/MM/YYYY)
+                    const expiryDate = new Date(data.expiry_date);
+                    const formattedExpiryDate = `${String(expiryDate.getDate()).padStart(2, '0')}/${String(expiryDate.getMonth() + 1).padStart(2, '0')}/${expiryDate.getFullYear()}`;
+
+                    document.getElementById('accountInfo').innerHTML = `
+                        <p>Nome de usuário: ${data.username}</p>
+                        <p>Token: ${data.token}</p>
+                        <p>Data de vencimento do token: ${formattedExpiryDate}</p>
+                    `;
+                })
+                .catch(error => {
+                    alert('Erro: ' + error.message);
+                });
+        }
+    </script>
+</body>
+</html>

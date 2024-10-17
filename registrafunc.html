@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Funcionários</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+
+#backButton {
+            position: fixed;
+            top: 20px; /* Distância do topo */
+            left: 20px; /* Distância da esquerda */
+            width: 50px;
+            height: 50px;
+            border: 2px solid transparent; /* Borda transparente por padrão */
+            border-radius: 50%; /* Borda arredondada */
+            background-color: transparent; /* Remove o fundo */
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: none; /* Remove sombra */
+            transition: border 0.3s ease; /* Adiciona transição para a borda */
+        }
+
+        #backButton:hover {
+            border: 2px solid #7a2b8a; /* Borda roxa ao passar o mouse */
+        }
+
+        .backbutton button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 45px; /* Borda arredondada igual ao card */
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 10px; /* Adiciona margem ao botão */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            display: inline-block; /* Garante que o botão seja tratado como inline */
+            border: 2px solid transparent;
+        }
+
+        .backbutton button:hover {
+            border: 2px solid transparent;
+        }
+
+
+    </style>
+
+
+</head>
+<body>
+    <button id="backButton" onclick="window.location.href='escolhafunc.html'"><span class="back-arrow">←</span></button>
+    <div class="background-blur"></div>
+    <div class="container">
+        <h2>Adicionar Funcionário</h2>
+        <div class="form-card">
+            <form id="employeeForm">
+                <label for="name">Nome:</label>
+                <input type="text" id="name" name="name" required oninvalid="this.setCustomValidity('Por favor, preencha este campo.')" oninput="this.setCustomValidity('')">
+
+                <label for="role">Cargo:</label>
+                <input type="text" id="role" name="role" required oninvalid="this.setCustomValidity('Por favor, preencha este campo.')" oninput="this.setCustomValidity('')">
+
+                <label for="hire_date">Data de Contratação:</label>
+                <input type="date" id="hire_date" name="hire_date" required oninvalid="this.setCustomValidity('Por favor, preencha este campo.')" oninput="this.setCustomValidity('')">
+
+                <label for="salary">Salário:</label>
+                <input type="text" id="salary" name="salary" required oninvalid="this.setCustomValidity('Por favor, preencha este campo.')" oninput="this.setCustomValidity('')">
+
+                <label for="payment_frequency">Frequência de Pagamento:</label>
+                <select id="payment_frequency" name="payment_frequency" required oninvalid="this.setCustomValidity('Por favor, selecione uma opção.')" oninput="this.setCustomValidity('')">
+                    <option value="">Selecione</option> <!-- Adicione uma opção vazia para forçar a seleção -->
+                    <option value="mensal">Mensal</option>
+                    <option value="quinzenal">Quinzenal</option>
+                    <option value="semanal">Semanal</option>
+                </select>
+
+                <button type="submit">Adicionar Funcionário</button>
+            </form>
+        </div>
+
+        <h2>Lista de Funcionários</h2>
+        <div class="table-card">
+            <div class="table-container" id="employeesTableContainer">
+                <table id="employeeTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Cargo</th>
+                            <th>Data de Contratação</th>
+                            <th>Salário</th>
+                            <th>Frequência de Pagamento</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <div id="totalExpenses"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('employeeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const role = document.getElementById('role').value;
+            const hire_date = document.getElementById('hire_date').value;
+            const salary = document.getElementById('salary').value;
+            const payment_frequency = document.getElementById('payment_frequency').value;
+
+            const reminder_date = calculateReminderDate(hire_date, payment_frequency);
+
+            fetch('http://localhost:3001/addEmployee', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, role, hire_date, salary, payment_frequency, reminder_date })
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    throw new Error('Erro ao adicionar funcionário');
+                }
+            })
+            .then(data => {
+                alert(data);
+                loadEmployees();
+                document.getElementById('employeeForm').reset();
+            })
+            .catch(error => {
+                alert('Ocorreu um erro: ' + error.message);
+            });
+        });
+
+        function calculateReminderDate(hire_date, payment_frequency) {
+            const hireDate = new Date(hire_date);
+            let reminderDate;
+
+            switch (payment_frequency) {
+                case 'mensal':
+                    reminderDate = new Date(hireDate.setMonth(hireDate.getMonth() + 1));
+                    break;
+                case 'quinzenal':
+                    reminderDate = new Date(hireDate.setDate(hireDate.getDate() + 15));
+                    break;
+                case 'semanal':
+                    reminderDate = new Date(hireDate.setDate(hireDate.getDate() + 7));
+                    break;
+                default:
+                    reminderDate = hireDate; // Fallback
+                    break;
+            }
+            return reminderDate.toISOString().split('T')[0]; // Formata para YYYY-MM-DD
+        }
+
+        function loadEmployees() {
+            fetch('http://localhost:3001/employees')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.querySelector('#employeeTable tbody');
+                    tbody.innerHTML = ''; // Limpa a tabela antes de adicionar novos funcionários
+                    let totalExpenses = 0;
+                    data.forEach(employee => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${employee.id}</td>
+                            <td>${employee.name}</td>
+                            <td>${employee.role}</td>
+                            <td>${formatDate(employee.hire_date)}</td>
+                            <td>${employee.salary}</td>
+                            <td>${employee.payment_frequency}</td>
+                            <td><button class="delete-btn" onclick="deleteEmployee(${employee.id})"><span class="delete-label">Excluir</span></button></td>
+                        `;
+                        tbody.appendChild(row);
+                        totalExpenses += parseFloat(employee.salary);
+                    });
+                    document.getElementById('totalExpenses').innerText = `Total de Despesas: R$ ${totalExpenses.toFixed(2)}`;
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar funcionários:', error);
+                });
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-BR'); // Formatação para DD/MM/YYYY
+        }
+
+        function deleteEmployee(id) {
+            fetch(`http://localhost:3001/employees/${id}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Funcionário excluído com sucesso!');
+                    loadEmployees();
+                } else {
+                    throw new Error('Erro ao excluir funcionário');
+                }
+            })
+            .catch(error => {
+                alert('Ocorreu um erro: ' + error.message);
+            });
+        }
+
+        window.onload = loadEmployees;
+    </script>
+
+        
+</body>
+</html>

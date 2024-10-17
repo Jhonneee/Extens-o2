@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Principal</title>
+    <style>
+        body {
+            background-color: black;
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            overflow: auto;
+        }
+
+        .container {
+            width: 1200px !important;
+            padding: 0 !important;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        @media screen and (min-width: 992px) and (max-width: 1439px) {
+            .container {
+                max-width: 1279px !important;
+                margin: 0 80px !important;
+                width: auto !important;
+            }
+        }
+
+        @media screen and (max-width: 991px) {
+            .container {
+                max-width: 959px !important;
+                margin: 0 16px !important;
+                width: auto !important;
+            }
+        }
+
+        .gradient-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+            padding: 30px;
+        }
+
+        @media screen and (max-width: 991px) {
+            .gradient-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .container-title {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 40px;
+            color: #fff;
+            font-weight: 600;
+            line-height: 60px;
+        }
+
+        .card {
+            max-width: 550px;
+            border: 0;
+            width: 100%;
+            margin-inline: auto;
+        }
+
+        .container-card {
+            position: relative;
+            border: 2px solid transparent;
+            background: linear-gradient(71deg, #080509, #1a171c, #080509);
+            background-clip: padding-box;
+            border-radius: 45px;
+            padding: 40px;
+        }
+
+        .bg-green-box,
+        .bg-white-box,
+        .bg-yellow-box,
+        .bg-blue-box {
+            position: relative;
+        }
+
+        .bg-green-box::after,
+        .bg-white-box::after,
+        .bg-yellow-box::after,
+        .bg-blue-box::after {
+            position: absolute;
+            top: -1px;
+            bottom: -1px;
+            left: -1px;
+            right: -1px;
+            content: "";
+            z-index: -1;
+            border-radius: 45px;
+        }
+
+        .bg-green-box::after {
+            background: linear-gradient(71deg, #0d1212, #3da077, #0d1212);
+        }
+
+        .bg-white-box::after {
+            background: linear-gradient(71deg, #121013, #b0afb0, #121013);
+        }
+
+        .bg-yellow-box::after {
+            background: linear-gradient(71deg, #110e0e, #afa220, #110e0e);
+        }
+
+        .bg-blue-box::after {
+            background: linear-gradient(71deg, #0c0a0e, #5f6fad, #0c0a0e);
+        }
+
+        .card-title {
+            font-weight: 600;
+            color: white;
+            letter-spacing: -0.02em;
+            line-height: 40px;
+            font-size: 28px;
+            padding-bottom: 8px;
+        }
+
+        .card-description {
+            font-weight: 600;
+            line-height: 32px;
+            color: hsla(0, 0%, 100%, 0.5);
+            font-size: 16px;
+            max-width: 470px;
+        }
+
+        /* Card hover effect */
+        .card:hover {
+            transform: scale(1.05);
+            transition: transform 0.3s;
+        }
+
+        #backButton {
+            position: fixed;
+            top: 20px; /* Distância do topo */
+            left: 20px; /* Distância da esquerda */
+            width: 50px;
+            height: 50px;
+            border: 2px solid transparent; /* Borda transparente por padrão */
+            border-radius: 50%; /* Borda arredondada */
+            background-color: transparent; /* Remove o fundo */
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: none; /* Remove sombra */
+            transition: border 0.3s ease; /* Adiciona transição para a borda */
+        }
+
+        #backButton:hover {
+            border: 2px solid #7a2b8a; /* Borda roxa ao passar o mouse */
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 45px; /* Borda arredondada igual ao card */
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease, border 0.3s ease; /* Adiciona transição ao border */
+            margin-top: 10px; /* Adiciona margem ao botão */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            display: inline-block; /* Garante que o botão seja tratado como inline */
+            border: 2px solid transparent;
+            background-color: transparent; /* Fundo transparente */        
+        }
+
+        button:hover {
+            border: 2px solid transparent;
+        }
+    </style>
+    <script>
+        function confirmLogout() {
+            const confirmAction = confirm("Você deseja deslogar?");
+            if (confirmAction) {
+                window.location.href = 'index.html'; // Redireciona para a página inicial
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <button id="backButton" onclick="confirmLogout()"><span class="back-arrow">←</span></button>
+
+    <div class="container">
+        <h1 class="container-title">Bem-vindo</h1>
+        <div class="gradient-cards">
+            <div class="card bg-green-box" onclick="window.location.href='registrafunc.html'">
+                <div class="container-card">
+                    <h2 class="card-title">Registrar Funcionário</h2>
+                    <p class="card-description">Adicione um novo funcionário ao sistema.</p>
+                </div>
+            </div>
+            <div class="card bg-blue-box" onclick="window.location.href='estoque.html'">
+                <div class="container-card">
+                    <h2 class="card-title">Registrar itens no estoque</h2>
+                    <p class="card-description">Tenha um melhor controle dos itens</p>
+                </div>
+            </div>
+            <div class="card bg-yellow-box" onclick="window.location.href='grafico.html'">
+                <div class="container-card">
+                    <h2 class="card-title">Relatório de gastos</h2>
+                    <p class="card-description">Veja em um gráfico como ficam suas despesas</p>
+                </div>
+            </div>
+            <div class="card bg-white-box" onclick="window.location.href='account.html'">
+                <div class="container-card">
+                    <h2 class="card-title">Informações da conta</h2>
+                    <p class="card-description">Veja o tempo do seu token</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
