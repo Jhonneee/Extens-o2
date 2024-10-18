@@ -26,10 +26,10 @@ db.connect(err => {
     console.log('Conectado ao banco MySQL');
 });
 
-
-
-
-// ... [código existente]
+// Redireciona para index.html quando acessar a raiz "/"
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 // Configurações adicionais para gerenciar produtos
 const items = [];
