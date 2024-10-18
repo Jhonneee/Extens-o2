@@ -27,9 +27,11 @@ db.connect(err => {
     console.log('Conectado ao banco MySQL');
 });
 
-// Redireciona para index.html quando acessar a raiz "/"
+// Servir arquivos estáticos da pasta 'public'
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Configurações adicionais para gerenciar produtos
