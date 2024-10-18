@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const bcrypt = require('bcrypt'); // Importa o bcrypt para criptografia de senhas
 const { v4: uuidv4 } = require('uuid'); // Certifique-se de ter importado o uuid
+const path = require('path'); // Importa o módulo path
 
 const app = express();
 app.use(cors());
