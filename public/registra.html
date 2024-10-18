@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Usuário</title>
-    <link rel="stylesheet" href="/public/styles.css">
+    <link rel="stylesheet" href="./css/styles.css">
     <style>
         /* Estilos gerais do corpo */
         body {
@@ -141,7 +141,7 @@
     </style>
 </head>
 <body>
-    <button id="backButton" onclick="window.location.href='/public/login.html'"><span class="back-arrow">←</span></button>
+    <button id="backButton" onclick="window.location.href='login.html'"><span class="back-arrow">←</span></button>
     <div class="background-blur"></div>
     <div class="container">
         <h2>Cadastro</h2>
@@ -179,7 +179,7 @@
                         alert(data);
                         document.getElementById('registerForm').reset();
                         // Redireciona para a página de login
-                        window.location.href = '/public/login.html';
+                        window.location.href = 'login.html';
                     })
                     .catch(error => {
                         alert('Erro: ' + error.message);
