@@ -12,11 +12,13 @@ app.use(bodyParser.json());
 
 // Configuração do banco de dados
 const db = mysql.createConnection({
-    host: 'localhost',
+    host: 'junction.proxy.rlwy.net',
     user: 'root',
-    password: 'Jack123456@',
-    database: 'trabaio'
+    password: 'KkAxAgLfztnxyAEjQLDghYwfZCrbGWQT',
+    database: 'railway',
+    port: 30039
 });
+
 
 // Conecta ao banco
 db.connect(err => {
@@ -293,9 +295,32 @@ app.post('/login', (req, res) => {
     });
 });
 
-const PORT = process.env.PORT || 3000;
+
+
+// Atualiza um funcionário
+app.put('/employees/:id', (req, res) => {
+    const { id } = req.params;
+    const { name, role, salary } = req.body;
+
+    const updateEmployeeQuery = 'UPDATE employees SET name = ?, role = ? WHERE id = ?';
+    const updateSalaryQuery = 'UPDATE salaries SET amount = ? WHERE employee_id = ?';
+
+    db.query(updateEmployeeQuery, [name, role, id], (err) => {
+        if (err) {
+            console.error('Erro ao atualizar funcionário:', err);
+            return res.status(500).send('Erro ao atualizar funcionário');
+        }
+        db.query(updateSalaryQuery, [salary, id], (err) => {
+            if (err) {
+                console.error('Erro ao atualizar salário:', err);
+                return res.status(500).send('Erro ao atualizar salário');
+            }
+            res.send('Funcionário atualizado com sucesso!');
+        });
+    });
+});
+
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
 });
-
-

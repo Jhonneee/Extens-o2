@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoJS Interactive Org Chart with Styled Buttons</title>
+    <script src="https://unpkg.com/gojs/release/go.js"></script>
+    <style>
+        /* Estilos gerais */
+        body {
+            background-color: black;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            width: 1200px;
+            max-width: 100%;
+            margin: auto;
+            padding: 0;
+        }
+
+        .container-title {
+            text-align: center;
+            font-size: 40px;
+            font-weight: 600;
+            line-height: 60px;
+            margin-bottom: 40px;
+            color: #fff;
+        }
+
+        #myDiagramDiv {
+            width: 100%;
+            height: 600px;
+            border: 1px solid black;
+            border-radius: 12px;
+        }
+
+        /* Estilo dos botões */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px; /* Espaçamento entre os botões */
+            margin-top: 20px; /* Margem acima do container dos botões */
+        }
+
+        .controls button {
+            background: transparent; /* Remove o fundo do botão */
+            color: #490ee9; /* Cor do texto */
+            border: 2px solid transparent; /* Define uma borda transparente */
+            border-radius: 45px; /* Bordas arredondadas */
+            cursor: pointer; /* Cursor de ponteiro ao passar o mouse */
+            padding: 12px 20px; /* Espaçamento interno */
+            font-size: 14px; /* Tamanho da fonte */
+            font-weight: 600; /* Peso da fonte */
+            border-image: linear-gradient(71deg, #0c0a0e, #5f6fad, #0c0a0e) 1; /* Gradiente aplicado à borda */
+            transition: border-image 0.3s ease; /* Transição suave para o gradiente da borda */
+        }
+
+        .controls button:hover {
+            border-image: linear-gradient(71deg, #110e0e, #9605da, #110e0e) 1; /* Gradiente da borda ao passar o mouse */
+        }
+
+        /* Estilo dos nós */
+        .node {
+            background: transparent; /* Fundo transparente */
+            color: #fff; /* Cor do texto dos nós */
+            border: 5px solid transparent; /* Borda inicial transparente */
+            border-radius: 45px; /* Bordas arredondadas */
+            border-image: linear-gradient(71deg, #0c0a0e, #5f6fad, #0c0a0e) 1; /* Gradiente aplicado à borda */
+        }
+
+        .node:hover {
+            border-image: linear-gradient(71deg, #110e0e, #9605da, #110e0e) 1; /* Gradiente da borda ao passar o mouse */
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="container-title">Organograma Interativo com GoJS</h2>
+        <div id="myDiagramDiv"></div>
+        
+        <div class="controls">
+            <button onclick="addNode()">Adicionar Posição</button>
+            <button onclick="removeNode()">Remover Posição Selecionada</button>
+            <button onclick="editNode()">Editar Posição Selecionada</button>
+        </div>
+    </div>
+
+    <script>
+        // Inicialização do diagrama
+        var $ = go.GraphObject.make;
+        var myDiagram = $(go.Diagram, "myDiagramDiv", {
+            initialAutoScale: go.Diagram.Uniform,
+            "undoManager.isEnabled": true,
+            "clickCreatingTool.archetypeNodeData": { name: "Nova Posição", color: "white" } // cor padrão como branco
+        });
+
+        // Template de nós com cor estilizada
+        myDiagram.nodeTemplate =
+            $(go.Node, "Auto",
+                $(go.Shape, "RoundedRectangle",
+                    { strokeWidth: 0, fill: "transparent" }, // Fundo transparente
+                    new go.Binding("fill", "color")),
+                $(go.TextBlock,
+                    { margin: 8, font: "bold 14px sans-serif", editable: true, stroke: "#490ee9" }, // Cor do texto ajustada
+                    new go.Binding("text", "name").makeTwoWay())
+            );
+
+        // Template de links com cor branca
+        myDiagram.linkTemplate =
+            $(go.Link,
+                $(go.Shape, { stroke: "white", strokeWidth: 2 }), // Linha da ligação em branco
+                $(go.Shape, { toArrow: "OpenTriangle", stroke: "white", fill: "white" }) // Seta em branco
+            );
+
+        // Modelo inicial de dados
+        myDiagram.model = new go.GraphLinksModel(
+            [
+                { key: 1, name: "Diretor", color: "white" },
+                { key: 2, name: "Gerente", color: "white", parent: 1 },
+                { key: 3, name: "Engenheiro", color: "white", parent: 2 },
+                { key: 4, name: "Designer", color: "white", parent: 2 },
+                { key: 5, name: "Assistente", color: "white", parent: 1 }
+            ],
+            [
+                { from: 1, to: 2 },
+                { from: 2, to: 3 },
+                { from: 2, to: 4 },
+                { from: 1, to: 5 }
+            ]
+        );
+
+        // Função para adicionar novo nó
+        function addNode() {
+            var selectedNode = myDiagram.selection.first();
+            if (selectedNode instanceof go.Node) {
+                var newNodeData = {
+                    name: "Nova Posição",
+                    color: "white",
+                    parent: selectedNode.data.key
+                };
+                myDiagram.model.addNodeData(newNodeData);
+                var linkData = { from: selectedNode.data.key, to: newNodeData.key };
+                myDiagram.model.addLinkData(linkData);
+            }
+        }
+
+        // Função para remover o nó selecionado
+        function removeNode() {
+            var selectedNode = myDiagram.selection.first();
+            if (selectedNode instanceof go.Node) {
+                myDiagram.model.removeNodeData(selectedNode.data);
+            }
+        }
+
+        // Função para editar o nome e a cor do nó selecionado
+        function editNode() {
+            var selectedNode = myDiagram.selection.first();
+            if (selectedNode instanceof go.Node) {
+                var newName = prompt("Digite o novo nome:", selectedNode.data.name);
+                var newColor = prompt("Digite a nova cor (ex: lightblue):", selectedNode.data.color);
+                if (newName !== null && newName.trim() !== "") {
+                    myDiagram.model.setDataProperty(selectedNode.data, "name", newName);
+                }
+                if (newColor !== null && newColor.trim() !== "") {
+                    myDiagram.model.setDataProperty(selectedNode.data, "color", newColor);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

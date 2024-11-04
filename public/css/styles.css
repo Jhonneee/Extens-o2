@@ -284,3 +284,64 @@ button {
 button:hover {
     opacity: 0.9; /* Leve transparência ao passar o mouse */
 }
+
+
+#diagram-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 20px;
+    border: 2px solid #ccc;
+}
+
+.employee-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+
+#employeeDiagram {
+    width: 100%;
+    height: 80vh;
+    position: relative;
+    border: 1px dashed #490606;
+    overflow: hidden;
+}
+
+.employee-bubble {
+    background-color: #4CAF50;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    position: absolute; /* Para permitir o arraste */
+    transition: all 0.3s ease;
+}
+
+.employee-bubble .employee-info {
+    display: none; /* Inicialmente escondido */
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    padding: 10px;
+    position: absolute;
+    bottom: 100%; /* Acima da bolinha */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+}
+
+.employee-bubble.expanded .employee-info {
+    display: block; /* Mostrar ao expandir */
+}
+
+.employee-name {
+    font-weight: bold;
+    padding: 10px;
+}

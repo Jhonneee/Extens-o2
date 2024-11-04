@@ -167,27 +167,28 @@
     </div>
 
     <script>
-        // Array simulando o banco de dados
-        const users = [
-            { username: 'pedrinho', password: 'carne' }
-        ];
-
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-
-            // Verifica se o usuário existe na "base de dados"
-            const user = users.find(user => user.username === username && user.password === password);
-
-            if (user) {
-                // Salva o nome de usuário no localStorage
-                localStorage.setItem('username', username);
-                alert('Login bem-sucedido!');
-                window.location.href = '/public/escolhafunc.html'; // Redireciona para a página de informações
-            } else {
-                alert('Usuário ou senha inválidos');
-            }
+            fetch('http://localhost:3001/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Salva o nome de usuário no localStorage
+                    localStorage.setItem('username', username);
+                    alert('Login bem-sucedido!');
+                    window.location.href = 'escolhafunc.html'; // Redireciona para a página de informações
+                } else {
+                    throw new Error('Usuário ou senha inválidos');
+                }
+            })
+            .catch(error => {
+                alert('Ocorreu um erro: ' + error.message);
+            });
         });
     </script>
 </body>
