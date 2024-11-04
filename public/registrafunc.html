@@ -126,7 +126,7 @@
 
             const reminder_date = calculateReminderDate(hire_date, payment_frequency);
 
-            fetch('http://localhost:3001/addEmployee', {
+            fetch('https://extens-o2-production.up.railway.app/addEmployee', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, role, hire_date, salary, payment_frequency, reminder_date })
@@ -170,7 +170,7 @@
         }
 
         function loadEmployees() {
-            fetch('http://localhost:3001/employees')
+            fetch('https://extens-o2-production.up.railway.app/employees')
                 .then(response => response.json())
                 .then(data => {
                     const tbody = document.querySelector('#employeeTable tbody');
@@ -203,7 +203,7 @@
         }
 
         function deleteEmployee(id) {
-            fetch(`http://localhost:3001/employees/${id}`, {
+            fetch(`https://extens-o2-production.up.railway.app/employees/${id}`, {
                 method: 'DELETE'
             })
             .then(response => {

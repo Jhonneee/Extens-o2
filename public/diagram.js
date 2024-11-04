@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const container = document.getElementById("diagram-container");
 
     // Função para buscar dados dos funcionários
-    fetch("/employees")
+    fetch("https://extens-o2-production.up.railway.app/employees")
         .then(response => response.json())
         .then(data => {
             data.forEach(employee => {
