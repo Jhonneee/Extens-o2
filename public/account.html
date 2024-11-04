@@ -67,10 +67,10 @@
 
         if (!username) {
             alert('Você precisa estar logado para acessar esta página.');
-            window.location.href = '/public/login.html'; // Redireciona para a página de login se não estiver logado
+            window.location.href = 'login.html'; // Redireciona para a página de login se não estiver logado
         } else {
             // Carrega as informações da conta
-            fetch(`https://extens-o2-production.up.railway.app/account/${username}`)
+            fetch(`gerencias.up.railway.app/account/${username}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Erro ao carregar informações da conta');
