@@ -247,7 +247,7 @@
             const quantity = document.getElementById('quantity').value;
 
             try {
-                const response = await fetch('gerencias.up.railway.app/addItem', {
+                const response = await fetch('https://gerencias.up.railway.app/addItem', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -271,7 +271,7 @@
         async function deleteProduct(id) {
             if (confirm('Tem certeza que deseja excluir este produto?')) {
                 try {
-                    const response = await fetch(`gerencias.up.railway.app/items/${id}`, {
+                    const response = await fetch(`https://gerencias.up.railway.app/items/${id}`, {
                         method: 'DELETE'
                     });
 

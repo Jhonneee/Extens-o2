@@ -169,7 +169,7 @@
             const password = document.getElementById('password').value;
             const token = document.getElementById('token').value;
 
-            fetch('gerencias.up.railway.app/register', {
+            fetch('https://gerencias.up.railway.app/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password, token })

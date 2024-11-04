@@ -170,7 +170,7 @@
         }
 
         function loadEmployees() {
-            fetch('gerencias.up.railway.app/employees')
+            fetch('https://gerencias.up.railway.app/employees')
                 .then(response => response.json())
                 .then(data => {
                     const tbody = document.querySelector('#employeeTable tbody');
@@ -203,7 +203,7 @@
         }
 
         function deleteEmployee(id) {
-            fetch(`gerencias.up.railway.app/employees/${id}`, {
+            fetch(`https://gerencias.up.railway.app/employees/${id}`, {
                 method: 'DELETE'
             })
             .then(response => {
