@@ -126,7 +126,7 @@
 
             const reminder_date = calculateReminderDate(hire_date, payment_frequency);
 
-            fetch('gerencias.up.railway.app/addEmployee', {
+            fetch('https://gerencias.up.railway.app/addEmployee', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, role, hire_date, salary, payment_frequency, reminder_date })

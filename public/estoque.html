@@ -213,7 +213,7 @@
         // Função para carregar os produtos
         async function loadProducts() {
             try {
-                const response = await fetch('gerencias.up.railway.app/items');
+                const response = await fetch('https://gerencias.up.railway.app/items');
                 const products = await response.json();
                 const tableBody = document.querySelector('#productsTable tbody');
                 tableBody.innerHTML = ''; // Limpa a tabela
